@@ -1,0 +1,9 @@
+Flask==2.3.3
+numpy==1.26.4
+spacy==3.6.1
+chardet
+en_ner_br_org-0.0.0.tar.gz
+en_ner_hk_org-0.0.0.tar.gz
+xx_ner_br_address-1.0.0.tar.gz
+xx_ner_hk_address-1.0.0.tar.gz
+xx_textcat_class-0.0.0.tar.gz

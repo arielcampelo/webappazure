@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Bem-vindo ao Extrator de Nome e Endereço</h1>
+    <a href="{{ url_for('extract') }}"><button>Ir para Extração</button></a>
+</body>
+</html>

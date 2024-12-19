@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Extrator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Extração de Nome e Endereço</h1>
+    <form method="post">
+        <label for="inputString">Insira a string para extração:</label>
+        <input type="text" id="inputString" name="inputString" required>
+        <button type="submit">Extrair</button>
+    </form>
+    {% if extracted_data %}
+        <h2>Resultado da Extração:</h2>
+        <pre>{{ extracted_data | tojson(indent=2) }}</pre>
+        <a href="data:application/json,{{ extracted_data | tojson }}" download="resultado.json">
+            <button>Baixar JSON</button>
+        </a>
+    {% endif %}
+</body>
+</html>
