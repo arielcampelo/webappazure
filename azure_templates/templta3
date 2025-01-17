@@ -1,0 +1,66 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]"
+        },
+        "appServicePlanName": {
+            "type": "string",
+            "maxLength": 40,
+            "metadata": {
+                "description": "App Service plan name."
+            }
+        },
+        "appServiceNamePrefix": {
+            "type": "string",
+            "maxLength": 47,
+            "metadata": {
+                "description": "App Service name prefix."
+            }
+        }
+    },
+    "variables": {
+        "appServicePlanSku": "B1",
+        "appServicePlanCapacity": 1,
+        "appServiceName": "[format('{0}{1}', parameters('appServiceNamePrefix'), uniqueString(resourceGroup().id))]",
+        "linuxFxVersion": "PYTHON|3.10"
+    },
+    "resources": [
+        {
+            "name": "[parameters('appServicePlanName')]",
+            "type": "Microsoft.Web/serverfarms",
+            "location": "[resourceGroup().location]",
+            "apiVersion": "2014-06-01",
+            "dependsOn": [],
+            "properties": {
+                "name": "[variables('appServiceName')]",
+                "sku": "[variables('appServicePlanSku')]"
+            }
+        },
+        {
+            "name": "[variables('appServiceName')]",
+            "type": "Microsoft.Web/sites",
+            "location": "[resourceGroup().location]",
+            "apiVersion": "2015-08-01",
+            "dependsOn": [
+                "[concat('Microsoft.Web/serverfarms/', parameters('[parameters('appServicePlanName')]Name'))]"
+            ],
+            "properties": {
+                "name": "[variables('appServicePlanName')]",
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms/', parameters('[parameters('appServicePlanName')]Name'))]"
+            }
+        }
+    ],
+    "outputs": {
+        "appServicePlan": {
+            "type": "string",
+            "value": "[parameters('appServicePlanName')]"
+        },
+        "appServiceApp": {
+            "type": "string",
+            "value": "[reference(resourceId('Microsoft.Web/sites', variables('appServiceName')), '2023-01-01').defaultHostName]"
+        }
+    }
+}

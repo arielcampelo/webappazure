@@ -1,0 +1,72 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "resources": [
+      {
+        "type": "Microsoft.Solutions/applications",
+        "apiVersion": "2019-07-01",
+        "name": "appname",
+        "location": "[resourceGroup().location]",
+        "properties": {
+          "managedResourceGroupId": "[resourceId('Microsoft.Resources/resourceGroups', 'managedResourceGroup')]",
+          "applicationDefinitionId": "[resourceId('Microsoft.Solutions/applicationDefinitions', 'appDefinitionName')]",
+          "parameters": {
+            "repositoryUrl": {
+              "value": "https://github.com/your-repo/your-app"
+            },
+            "branch": {
+              "value": "main"
+            }
+          }
+        },
+        "resources": [
+          {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "postDeploymentAction",
+            "properties": {
+              "mode": "Incremental",
+              "template": {
+                "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                "contentVersion": "1.0.0.0",
+                "resources": [
+                  {
+                    "type": "Microsoft.Web/sites",
+                    "apiVersion": "2021-02-01",
+                    "name": "[parameters('appName')]",
+                    "location": "[resourceGroup().location]",
+                    "properties": {
+                      "repositoryUrl": "[parameters('repositoryUrl')]",
+                      "branch": "[parameters('branch')]",
+                      "isManualIntegration": true
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "parameters": {
+      "appName": {
+        "type": "string",
+        "metadata": {
+          "description": "Name of the web app"
+        }
+      },
+      "repositoryUrl": {
+        "type": "string",
+        "metadata": {
+          "description": "URL of the GitHub repository"
+        }
+      },
+      "branch": {
+        "type": "string",
+        "defaultValue": "main",
+        "metadata": {
+          "description": "Branch of the GitHub repository"
+        }
+      }
+    }
+  }
